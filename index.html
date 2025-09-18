@@ -170,16 +170,16 @@
      //let valorConsumo = (consumo * (tarifaTE + tarifaTUSD));
       let valorConsumo = (consumo * (tarifaTE + tarifaTUSD));
      // let valorTotal = valorConsumo + iluminacao;
-     // let valorTotal = valorConsumo;
+      let valorTotal = valorConsumo;
 
 
       // 4. Valor da fatura com desconto aplicado
-      let valorComDesconto = valorConsumo * desconto;
-      let valorDescFatura  = valorConsumo - valorComDesconto;
+      let valorComDesconto = valorTotal * desconto;
+      let valorDescFatura  = valorTotal - valorComDesconto;
 
       // Aplicando desconto (sem contar iluminação pública)
 
-      let descontoMensal = valorConsumo * desconto;
+      let descontoMensal = valorTotal * desconto;
       let descontoAnual = descontoMensal * 12;
 
       // 5. Garante que não fique negativo
