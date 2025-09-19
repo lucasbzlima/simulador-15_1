@@ -11,16 +11,13 @@
       padding: 0;
       overflow: hidden;
     }
-    
+
     body {
       font-family: Arial, sans-serif;
       background: #f4f4f9;
       display: flex;
       justify-content: center;
       align-items: center;
-      /*min-height: 100vh;
-      margin: 5;
-      padding: 20px; */
     }
 
     .top-image {
@@ -33,9 +30,6 @@
       left: 50%;
       transform: translateX(-50%);
       z-index: 1000;
-      cursor: pointer;
-      display: block;
-      text-decoration: none;
     }
 
     .container {
@@ -45,10 +39,7 @@
       box-shadow: 0 4px 8px rgba(0,0,0,0.1);
       max-width: 420px;
       width: 100%;
-      margin-top: 200px; /* para não ficar escondido atrás da imagem */
-    }
-    .centralizado {
-      text-align: center; 
+      margin-top: 200px;
     }
 
     h2 {
@@ -104,7 +95,6 @@
       text-align: center;
     }
 
-    /* RESPONSIVIDADE PARA CELULAR */
     @media (max-width: 280px) {
       .top-image {
         height: 280px;
@@ -131,13 +121,11 @@
   </style>
 </head>
 <body>
-  
-  <!-- Imagem superior -->
-  <!-- <div class="top-image"></div> -->
-  <a href="https://www.instagram.com/sunboltflex/" target="_blank" class="top-image"></a>
+
+  <div class="top-image"></div>
 
   <div class="container">
-    <h2>Simule seu Desconto de 15%</h2>
+    <h2>Simule seu Desconto</h2>
     <label for="iluminacao">Iluminação Pública (R$):</label>
     <input type="number" id="iluminacao" inputmode="decimal" min="0" placeholder="Ex: 17,65">
 
@@ -155,7 +143,6 @@
       let iluminacao = parseFloat(document.getElementById('iluminacao').value) || 0;
       let consumo = parseFloat(document.getElementById('consumo').value) || 0;
 
-      // Validação de negativos
       if (iluminacao <= 0 || consumo < 0) {
         document.getElementById('erro').textContent = "⚠️ Os valores não podem ser negativos.";
         document.getElementById('resultado').innerHTML = "";
@@ -164,46 +151,56 @@
         document.getElementById('erro').textContent = "";
       }
 
-      // Tarifas fixas da planilha
+      // Tarifas
       const tarifaTE = 0.32159;
       const tarifaTUSD = 0.6098;
-      //const adcBandeira = 0.10328;
-      const desconto = 0.15; // 15%
+      const adcBandeira = 0.10328;
 
-      // Cálculo do valor da fatura (agora adcBandeira * consumo)
-     //let valorConsumo = (consumo * (tarifaTE + tarifaTUSD));
-      let valorConsumo = (consumo * (tarifaTE + tarifaTUSD));
+      // Cálculo da fatura
+      let valorConsumo = (consumo * (tarifaTE + tarifaTUSD)) + (consumo * adcBandeira);
       let valorTotal = valorConsumo + iluminacao;
-      let valorTotal1 = valorConsumo;
 
+      // Definição do desconto por faixa
+      let desconto = 0;
+      if (valorTotal >= 300 && valorTotal < 1000) {
+        desconto = 0.15;
+      } else if (valorTotal >= 1000) {
+        desconto = 0.20;
+      }
 
-      // 4. Valor da fatura com desconto aplicado
-      let valorComDesconto = valorTotal * desconto;
-      let valorDescFatura  = valorTotal - valorComDesconto;
-
-      // Aplicando desconto (sem contar iluminação pública)
-
-      let descontoMensal = valorDescFatura * desconto;
+      let descontoMensal = valorConsumo * desconto;
       let descontoAnual = descontoMensal * 12;
+      let valorComDesconto = valorTotal * desconto;
+      let valorDescFatura = valorTotal - valorComDesconto;
 
-      // 5. Garante que não fique negativo
       if (valorDescFatura < 0) {
-       valorComDescFatura = 0;
-      }      
+        valorDescFatura = 0;
+      }
 
-      // Formatação em R$ (compatível com Safari iOS)
       function formatar(valor) {
         return valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
       }
 
-      document.getElementById('resultado').innerHTML = `
+      // Montar resultado
+      let resultadoHTML = `
         <p><strong>Valor estimado da fatura:</strong> ${formatar(valorTotal)}</p>
-        <p class="centralizado"><strong><span style="color: green;">FATURA SUNBOLT FLEX</span></strong></p>
+        <p style="text-align: center;"><strong><span style="color: green;">FATURA SUNBOLT FLEX</span></strong></p>
+      `;
+
+      // Mostra o percentual de desconto apenas se houver
+      if (desconto > 0) {
+        resultadoHTML += `<p><strong>Desconto aplicado:</strong> ${desconto * 100}%</p>`;
+      }
+
+      resultadoHTML += `
         <p><strong>Valor Total da fatura c/ desconto:</strong> ${formatar(valorDescFatura)}</p>
         <p><strong>Desconto mensal previsto:</strong> ${formatar(descontoMensal)}</p>
         <p><strong>Desconto anual previsto:</strong> ${formatar(descontoAnual)}</p>
       `;
+
+      document.getElementById('resultado').innerHTML = resultadoHTML;
     }
   </script>
+
 </body>
 </html>
