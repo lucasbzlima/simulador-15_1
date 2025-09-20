@@ -200,6 +200,14 @@
 
       document.getElementById('resultado').innerHTML = resultadoHTML;
     }
+    
+        // Quando o usuário pressionar Enter em qualquer campo, dispara o botão Calcular
+      document.addEventListener("keypress", function(e) {
+        if (e.key === "Enter") {
+        e.preventDefault(); // impede envio de form ou recarregar a página
+        document.querySelector("button").click(); // clica no botão
+    }
+    });
   </script>
 
 </body>
