@@ -188,4 +188,44 @@
         valorDescFatura = 0;
       }
 
-      function form
+      function formatar(valor) {
+        return valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+      }
+
+      let resultadoHTML = `
+        <p><strong>Valor estimado da fatura:</strong> ${formatar(valorTotal)}</p>
+        <p style="text-align: center;"><strong><span style="color: green;">FATURA SUNBOLT FLEX</span></strong></p>
+      `;
+
+      if (desconto > 0) {
+        resultadoHTML += `<p><strong>Desconto aplicado:</strong> ${desconto * 100}%</p>`;
+      }
+
+      resultadoHTML += `
+        <p><strong>Valor Total da fatura c/ desconto:</strong> ${formatar(valorDescFatura)}</p>
+        <p><strong>Desconto mensal previsto:</strong> ${formatar(descontoMensal)}</p>
+        <p><strong>Desconto anual previsto:</strong> ${formatar(descontoAnual)}</p>
+      `;
+
+      document.getElementById('resultado').innerHTML = resultadoHTML;
+      document.getElementById('btnWhatsApp').style.display = 'block';
+    }
+
+    function enviarWhatsApp() {
+      const resultadoTexto = document.getElementById('resultado').innerText;
+      const telefone = "5585999416424"; // Altere para o número de destino (com DDI e DDD)
+      const mensagem = encodeURIComponent("Resultado do simulador de desconto de energia:\n\n" + resultadoTexto);
+      const url = `https://wa.me/${telefone}?text=${mensagem}`;
+      window.open(url, "_blank");
+    }
+
+    document.addEventListener("keypress", function(e) {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        document.querySelector("button").click();
+      }
+    });
+  </script>
+
+</body>
+</html>
