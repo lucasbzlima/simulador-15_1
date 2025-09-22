@@ -11,16 +11,13 @@
       padding: 0;
       overflow: hidden;
     }
-    
+
     body {
       font-family: Arial, sans-serif;
       background: #f4f4f9;
       display: flex;
       justify-content: center;
       align-items: center;
-      /*min-height: 100vh;
-      margin: 5;
-      padding: 20px; */
     }
 
     .top-image {
@@ -42,15 +39,12 @@
       box-shadow: 0 4px 8px rgba(0,0,0,0.1);
       max-width: 420px;
       width: 100%;
-      margin-top: 200px; /* para não ficar escondido atrás da imagem */
-    }
-    .centralizado {
-      text-align: center; 
+      margin-top: 200px;
     }
 
     h2 {
       text-align: center;
-      margin-bottom: 25px;
+      margin-bottom: 20px;
       color: #333;
     }
 
@@ -101,8 +95,17 @@
       text-align: center;
     }
 
-    /* RESPONSIVIDADE PARA CELULAR */
-    @media (max-width: 480px) {
+    #btnWhatsApp {
+      background-color: #25D366;
+      margin-top: 10px;
+      display: none;
+    }
+
+    #btnWhatsApp:hover {
+      background-color: #1ebe5b;
+    }
+
+    @media (max-width: 280px) {
       .top-image {
         height: 280px;
         background-size: contain;
@@ -128,12 +131,11 @@
   </style>
 </head>
 <body>
-  
-  <!-- Imagem superior -->
+
   <div class="top-image"></div>
 
   <div class="container">
-    <h2>Simule seu Desconto de 15%</h2>
+    <h2>Simule seu Desconto</h2>
     <label for="iluminacao">Iluminação Pública (R$):</label>
     <input type="number" id="iluminacao" inputmode="decimal" min="0" placeholder="Ex: 17,65" autofocus>
 
@@ -143,6 +145,9 @@
     <button onclick="calcular()">Calcular</button>
 
     <div class="resultado" id="resultado"></div>
+
+    <button id="btnWhatsApp" onclick="enviarWhatsApp()">Enviar resultado pelo WhatsApp</button>
+
     <div class="erro" id="erro"></div>
   </div>
 
@@ -151,62 +156,36 @@
       let iluminacao = parseFloat(document.getElementById('iluminacao').value) || 0;
       let consumo = parseFloat(document.getElementById('consumo').value) || 0;
 
-      // Validação de negativos
       if (iluminacao <= 0 || consumo < 0) {
         document.getElementById('erro').textContent = "⚠️ Os valores não podem ser negativos.";
         document.getElementById('resultado').innerHTML = "";
+        document.getElementById('btnWhatsApp').style.display = 'none';
         return;
       } else {
         document.getElementById('erro').textContent = "";
       }
 
-      // Tarifas fixas da planilha
       const tarifaTE = 0.32159;
       const tarifaTUSD = 0.6098;
       const adcBandeira = 0.10328;
-      const desconto = 0.15; // 15%
 
-      // Cálculo do valor da fatura (agora adcBandeira * consumo)
-     //let valorConsumo = (consumo * (tarifaTE + tarifaTUSD));
       let valorConsumo = (consumo * (tarifaTE + tarifaTUSD)) + (consumo * adcBandeira);
       let valorTotal = valorConsumo + iluminacao;
-     // let valorTotal = valorConsumo;
 
+      let desconto = 0;
+      if (valorTotal >= 300 && valorTotal < 1000) {
+        desconto = 0.15;
+      } else if (valorTotal >= 1000) {
+        desconto = 0.20;
+      }
 
-      // 4. Valor da fatura com desconto aplicado
-      let valorComDesconto = valorTotal * desconto;
-      let valorDescFatura  = valorTotal - valorComDesconto;
-
-      // Aplicando desconto (sem contar iluminação pública)
-
-      let descontoMensal = valorTotal * desconto;
+      let descontoMensal = valorConsumo * desconto;
       let descontoAnual = descontoMensal * 12;
+      let valorComDesconto = valorTotal * desconto;
+      let valorDescFatura = valorTotal - valorComDesconto;
 
-      // 5. Garante que não fique negativo
       if (valorDescFatura < 0) {
-       valorComDescFatura = 0;
-      }      
-
-      // Formatação em R$ (compatível com Safari iOS)
-      function formatar(valor) {
-        return valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        valorDescFatura = 0;
       }
 
-      document.getElementById('resultado').innerHTML = `
-        <p><strong>Valor da sua fatura:</strong> ${formatar(valorTotal)}</p>
-        <p class="centralizado"><strong><span style="color: green;">FATURA SUNBOLT FLEX</span></strong></p>
-        <p><strong>Valor total da sua fatura c/ desconto:</strong> ${formatar(valorDescFatura)}</p>
-        <p><strong>Economia mensal previsto:</strong> ${formatar(descontoMensal)}</p>
-        <p><strong>Economia anual previsto:</strong> ${formatar(descontoAnual)}</p>
-      `;
-      }
-        // Quando o usuário pressionar Enter em qualquer campo, dispara o botão Calcular
-      document.addEventListener("keypress", function(e) {
-        if (e.key === "Enter") {
-        e.preventDefault(); // impede envio de form ou recarregar a página
-        document.querySelector("button").click(); // clica no botão
-    }
-  });
-  </script>
-</body>
-</html>
+      function form
