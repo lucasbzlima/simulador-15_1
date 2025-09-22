@@ -105,6 +105,13 @@
       background-color: #1ebe5b;
     }
 
+    .aviso {
+      margin-top: 10px;
+      color: #b22222;
+      font-weight: bold;
+      text-align: center;
+    }
+
     @media (max-width: 280px) {
       .top-image {
         height: 280px;
@@ -146,13 +153,15 @@
 
     <div class="resultado" id="resultado"></div>
 
+    <div class="aviso" id="aviso"></div>
+
     <button id="btnWhatsApp" onclick="enviarWhatsApp()">Enviar resultado pelo WhatsApp</button>
 
     <div class="erro" id="erro"></div>
   </div>
 
   <script>
-    let valorTotal = 0; // variável global para usar nas funções
+    let valorTotal = 0; // variável global
 
     function calcular() {
       let iluminacao = parseFloat(document.getElementById('iluminacao').value) || 0;
@@ -162,6 +171,7 @@
         document.getElementById('erro').textContent = "⚠️ Os valores não podem ser negativos.";
         document.getElementById('resultado').innerHTML = "";
         document.getElementById('btnWhatsApp').style.display = 'none';
+        document.getElementById('aviso').textContent = "";
         return;
       } else {
         document.getElementById('erro').textContent = "";
@@ -200,22 +210,20 @@
       `;
 
       if (desconto > 0) {
-        resultadoHTML += `<p><strong>Desconto aplicado:</strong> ${desconto * 100}%</p>`;
+        resultadoHTML += `<p><strong>Desconto aplicado:</strong> ${desconto * 100}%</p>
+          <p><strong>Valor Total da fatura c/ desconto:</strong> ${formatar(valorDescFatura)}</p>
+          <p><strong>Desconto mensal previsto:</strong> ${formatar(descontoMensal)}</p>
+          <p><strong>Desconto anual previsto:</strong> ${formatar(descontoAnual)}</p>`;
       }
-
-      resultadoHTML += `
-        <p><strong>Valor Total da fatura c/ desconto:</strong> ${formatar(valorDescFatura)}</p>
-        <p><strong>Desconto mensal previsto:</strong> ${formatar(descontoMensal)}</p>
-        <p><strong>Desconto anual previsto:</strong> ${formatar(descontoAnual)}</p>
-      `;
 
       document.getElementById('resultado').innerHTML = resultadoHTML;
 
-      // só mostra o botão WhatsApp se a fatura for > 300
       if (valorTotal > 300) {
         document.getElementById('btnWhatsApp').style.display = 'block';
+        document.getElementById('aviso').textContent = "";
       } else {
         document.getElementById('btnWhatsApp').style.display = 'none';
+        document.getElementById('aviso').textContent = "⚠️ Faturas abaixo de R$ 300,00 não podem aderir ao desconto.";
       }
     }
 
@@ -226,7 +234,7 @@
       }
 
       const resultadoTexto = document.getElementById('resultado').innerText;
-      const telefone = "5585999416424"; // Altere para o número de destino (com DDI e DDD)
+      const telefone = "5585999416424"; // número de destino
       const mensagem = encodeURIComponent("Resultado do simulador de desconto de energia:\n\n" + resultadoTexto);
       const url = `https://wa.me/${telefone}?text=${mensagem}`;
       window.open(url, "_blank");
