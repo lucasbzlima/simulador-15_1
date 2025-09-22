@@ -152,6 +152,8 @@
   </div>
 
   <script>
+    let valorTotal = 0; // variável global para usar nas funções
+
     function calcular() {
       let iluminacao = parseFloat(document.getElementById('iluminacao').value) || 0;
       let consumo = parseFloat(document.getElementById('consumo').value) || 0;
@@ -170,7 +172,7 @@
       const adcBandeira = 0.10328;
 
       let valorConsumo = (consumo * (tarifaTE + tarifaTUSD)) + (consumo * adcBandeira);
-      let valorTotal = valorConsumo + iluminacao;
+      valorTotal = valorConsumo + iluminacao;
 
       let desconto = 0;
       if (valorTotal >= 300 && valorTotal < 1000) {
@@ -208,18 +210,26 @@
       `;
 
       document.getElementById('resultado').innerHTML = resultadoHTML;
-      document.getElementById('btnWhatsApp').style.display = 'block';
+
+      // só mostra o botão WhatsApp se a fatura for > 300
+      if (valorTotal > 300) {
+        document.getElementById('btnWhatsApp').style.display = 'block';
+      } else {
+        document.getElementById('btnWhatsApp').style.display = 'none';
+      }
     }
 
     function enviarWhatsApp() {
+      if (valorTotal <= 300) {
+        alert("⚠️ O envio só é permitido para valores acima de R$ 300,00.");
+        return;
+      }
+
       const resultadoTexto = document.getElementById('resultado').innerText;
       const telefone = "5585999416424"; // Altere para o número de destino (com DDI e DDD)
       const mensagem = encodeURIComponent("Resultado do simulador de desconto de energia:\n\n" + resultadoTexto);
       const url = `https://wa.me/${telefone}?text=${mensagem}`;
       window.open(url, "_blank");
-    } else {
-      alert("O envio só é permitido para valores acima de R$ 300,00");
-      }  
     }
 
     document.addEventListener("keypress", function(e) {
